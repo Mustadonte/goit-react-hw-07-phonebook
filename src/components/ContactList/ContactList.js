@@ -1,7 +1,5 @@
-import {
-  getFilteredContacts,
-  removeContact,
-} from 'redux/Contacts/Contact-list/';
+import { getFilteredContacts } from 'redux/Contacts/Contact-list/';
+import * as contactsOperations from '../../redux/Contacts/Contact-list/contacts-operations';
 import { ContactListItem } from 'components/ContactListItem/ContactListItem';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -16,7 +14,7 @@ export const ContactList = () => {
           id={id}
           name={name}
           number={number}
-          onDeleteBtn={() => dispatch(removeContact(id))}
+          onDeleteBtn={() => dispatch(contactsOperations.removeContact(id))}
         />
       ))}
     </ul>

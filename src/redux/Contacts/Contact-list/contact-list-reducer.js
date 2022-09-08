@@ -1,16 +1,38 @@
-import { createReducer } from '@reduxjs/toolkit';
-import { addContact, removeContact } from './contact-list-actions';
+import { createReducer, combineReducers } from '@reduxjs/toolkit';
+import * as contactsActions from './contact-list-actions';
 
-const initialContacts = [
-  { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-  { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-  { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-  { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-];
-export const contactListReducer = createReducer(initialContacts, {
-  [addContact]: (state, action) => {
+const items = createReducer([], {
+  [contactsActions.fetchContactsSuccess]: (_, action) => action.payload,
+  [contactsActions.addContactSuccess]: (state, action) => {
     return [...state, action.payload];
   },
-  [removeContact]: (state, action) =>
-    state.filter(item => item.id !== action.payload),
+  [contactsActions.removeContactSuccess]: (state, action) =>
+    state.filter(contact => contact.id !== action.payload),
+});
+
+const isLoading = createReducer(false, {
+  [contactsActions.fetchContactsRequest]: () => true,
+  [contactsActions.fetchContactsSuccess]: () => false,
+  [contactsActions.fetchContactsError]: () => false,
+  [contactsActions.addContactRequest]: () => true,
+  [contactsActions.addContactSuccess]: () => false,
+  [contactsActions.addContactError]: () => false,
+  [contactsActions.removeContactRequest]: () => true,
+  [contactsActions.removeContactSuccess]: () => false,
+  [contactsActions.removeContactError]: () => false,
+});
+
+const error = createReducer(null, {
+  [contactsActions.fetchContactsError]: (_, action) => action.payload,
+  [contactsActions.fetchContactsRequest]: () => null,
+  [contactsActions.addContactError]: (_, action) => action.payload,
+  [contactsActions.addContactRequest]: () => null,
+  [contactsActions.removeContactError]: (_, action) => action.payload,
+  [contactsActions.removeContactRequest]: () => null,
+});
+
+export default combineReducers({
+  items,
+  isLoading,
+  error,
 });

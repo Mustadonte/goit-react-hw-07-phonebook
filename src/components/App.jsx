@@ -1,33 +1,27 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { addContact } from 'redux/Contacts/Contact-list/contact-list-actions';
 import { getFilteredContacts } from 'redux/Contacts/Contact-list/';
 import { Container } from '../Container/Container';
 import ContactForm from './ContactForm/ContactForm';
 import { ContactList } from './ContactList/ContactList';
 import { Filter } from './Filter/Filter';
 
+import * as contactsOperations from '../redux/Contacts/Contact-list/contacts-operations';
+import { useEffect } from 'react';
+
 export const App = () => {
-  // const [contacts, setContacts] = useState(() => {
-  //   return (
-  //     JSON.parse(window.localStorage.getItem('contacts')) ?? initialContacts
-  //   );
-  // });
-  // const [filter, setFilter] = useState(() => {
-  //   return JSON.parse(window.localStorage.getItem('filter')) ?? '';
-  // });
-
-  // useEffect(() => {
-  //   window.localStorage.setItem('contacts', JSON.stringify(contacts));
-  // }, [contacts]);
-
   const dispatch = useDispatch();
   const contacts = useSelector(getFilteredContacts);
+
+  useEffect(() => {
+    dispatch(contactsOperations.fetchContacts());
+  }, [dispatch]);
 
   const formSubmitHandler = data => {
     if (contacts.find(contact => contact.name === data.name)) {
       return alert(`Contact of ${data.name} is already exist`);
     }
-    dispatch(addContact(data));
+
+    dispatch(contactsOperations.addContact(data));
   };
 
   return (
