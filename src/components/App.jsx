@@ -1,36 +1,31 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { getFilteredContacts } from 'redux/Contacts/Contact-list/';
+import { fetchContacts } from 'redux/Contacts/Contact-list/contacts-operations';
+import { useDispatch, useSelector } from 'react-redux';
 import { Container } from '../Container/Container';
 import ContactForm from './ContactForm/ContactForm';
 import { ContactList } from './ContactList/ContactList';
 import { Filter } from './Filter/Filter';
-
-import * as contactsOperations from '../redux/Contacts/Contact-list/contacts-operations';
+import { Loader } from './Loader/Loader';
 import { useEffect } from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const App = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(getFilteredContacts);
+  const pending = useSelector(store => store.contacts.isLoading);
 
   useEffect(() => {
-    dispatch(contactsOperations.fetchContacts());
+    dispatch(fetchContacts());
   }, [dispatch]);
-
-  const formSubmitHandler = data => {
-    if (contacts.find(contact => contact.name === data.name)) {
-      return alert(`Contact of ${data.name} is already exist`);
-    }
-
-    dispatch(contactsOperations.addContact(data));
-  };
 
   return (
     <Container>
       <h1>Phonebook</h1>
-      <ContactForm onSubmit={formSubmitHandler} />
+      <ContactForm />
       <h2>Search contact</h2>
       <Filter />
       <ContactList />
+      {pending && <Loader />}
+      <ToastContainer />
     </Container>
   );
 };
